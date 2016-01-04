@@ -1,0 +1,6 @@
+# RecyclerView添加Header和Footer
+
+ListView可以很轻松的添加header和footer。但是RecyclerView没有提供相应的方法，要想添加header和footer只能通过不同的item type来加载不同的view。
+
+该Demo写了一个BaseRecyclerAdapter, 可以支持添加一个header和footer。这样项目中需要用到recyclerview时就不用每次都写重复的代码，只要继承该基类即可。
+
