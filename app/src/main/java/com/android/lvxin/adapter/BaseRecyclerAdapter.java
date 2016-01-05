@@ -1,6 +1,8 @@
 package com.android.lvxin.adapter;
 
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -36,6 +38,7 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<Recycl
 
     /**
      * add header view
+     *
      * @param headerView
      */
     public void setHeaderView(View headerView) {
@@ -45,6 +48,7 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<Recycl
 
     /**
      * add footer view
+     *
      * @param footerView
      */
     public void setFooterView(View footerView) {
@@ -137,6 +141,47 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<Recycl
         } else {
             return VIEW_TYPE_ITEM;
         }
+    }
+
+    /**
+     * 解决GridLayoutManager时header或者footer时没有占据屏幕宽度
+     *
+     * @param recyclerView
+     */
+    @Override
+    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
+        RecyclerView.LayoutManager manager = recyclerView.getLayoutManager();
+        if (manager instanceof GridLayoutManager) {
+            final GridLayoutManager gridLayoutManager = (GridLayoutManager) manager;
+            gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+                @Override
+                public int getSpanSize(int position) {
+                    int item = getItemViewType(position);
+                    return (item == VIEW_TYPE_HEADER || item == VIEW_TYPE_FOOTER)
+                            ? gridLayoutManager.getSpanCount() : 1;
+                }
+            });
+        }
+    }
+
+    /**
+     * 解决StaggeredGridLayoutManager时header或者footer时没有占据屏幕宽度
+     *
+     * @param holder
+     */
+    @Override
+    public void onViewAttachedToWindow(RecyclerView.ViewHolder holder) {
+        super.onViewAttachedToWindow(holder);
+        ViewGroup.LayoutParams layoutParams = holder.itemView.getLayoutParams();
+        boolean flag = (null != layoutParams)
+                && (layoutParams instanceof StaggeredGridLayoutManager.LayoutParams)
+                && (0 == holder.getLayoutPosition() || getItemCount() - 1 == holder.getLayoutPosition());
+        if (flag) {
+            StaggeredGridLayoutManager.LayoutParams lp = (StaggeredGridLayoutManager.LayoutParams) layoutParams;
+            lp.setFullSpan(true);
+        }
+
     }
 
     public abstract RecyclerView.ViewHolder onCreate(ViewGroup parent, final int viewType);

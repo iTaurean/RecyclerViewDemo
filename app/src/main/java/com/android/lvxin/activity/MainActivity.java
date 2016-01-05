@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Toast;
 
@@ -16,7 +15,8 @@ import com.android.lvxin.model.TObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements BaseRecyclerAdapter.OnItemClickListener, BaseRecyclerAdapter.OnItemLongClickListener {
+public class MainActivity extends AppCompatActivity implements
+        BaseRecyclerAdapter.OnItemClickListener, BaseRecyclerAdapter.OnItemLongClickListener {
 
     private RecyclerView recyclerView;
     private MainAdapter mAdapter;
@@ -32,30 +32,21 @@ public class MainActivity extends AppCompatActivity implements BaseRecyclerAdapt
     private void initView() {
         recyclerView = (RecyclerView) findViewById(R.id.rv_main);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-//        recyclerView.addItemDecoration(new DividerItemDecoration(DisplayUtils.dp2px(this, 5)));
         mAdapter = new MainAdapter(this);
         mAdapter.update(buildData());
         mAdapter.setOnItemClickListener(this);
         mAdapter.setOnItemLongClickListener(this);
         recyclerView.setAdapter(mAdapter);
 
-        initHeaderView();
-        initFooterView();
-    }
-
-    private void initFooterView() {
-        View footerView = LayoutInflater.from(this).inflate(R.layout.layout_footer_view, recyclerView, false);
-        mAdapter.setFooterView(footerView);
-    }
-
-    private void initHeaderView() {
-        View headerView = LayoutInflater.from(this).inflate(R.layout.layout_header_view, recyclerView, false);
-        mAdapter.setHeaderView(headerView);
     }
 
     @Override
     public void onItemClick(View view, int position, Object data) {
-        Toast.makeText(this, "click item", Toast.LENGTH_SHORT).show();
+        if (0 == position) {
+            LinearLayoutManagerActivity.start(MainActivity.this);
+        } else if (1 == position) {
+            GridLayoutManagerActivity.start(MainActivity.this);
+        }
     }
 
     @Override
@@ -65,14 +56,14 @@ public class MainActivity extends AppCompatActivity implements BaseRecyclerAdapt
 
 
     private List<TObject> buildData() {
-        int size = 20;
+        int size = 2;
         List<TObject> data = new ArrayList<>(size);
-        for (int i = 0; i < size; i++) {
-            TObject obj = new TObject();
-            obj.content = "content " + i;
-            data.add(obj);
-        }
-
+        TObject obj = new TObject();
+        obj.content = "RecyclerView for LinearLayoutManager";
+        data.add(obj);
+        obj = new TObject();
+        obj.content = "RecyclerView for GridLayoutManager";
+        data.add(obj);
         return data;
     }
 }

@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">RecyclerViewDemo</string>
+    <string name="title_activity_linear_layout_manager">LinearLayoutManagerActivity</string>
 </resources>
